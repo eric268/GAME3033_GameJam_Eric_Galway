@@ -36,6 +36,10 @@ public class GeneralUIManager : MonoBehaviour
 
     public void OnRestartButtonPressed()
     {
+        Time.timeScale = 1.0f;
+        PlayerController.gameIsPaused = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         SceneManager.LoadScene("MainGameScene");
     }
 

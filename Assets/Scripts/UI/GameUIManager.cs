@@ -29,6 +29,7 @@ public class GameUIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameActive = false;
         leftStartingPosition = leftBoarderImage.rectTransform.anchoredPosition;
         rightStartingPosition = rightBoarderImage.rectTransform.anchoredPosition;
         StartGame();
