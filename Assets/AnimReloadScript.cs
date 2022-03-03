@@ -20,6 +20,7 @@ public class AnimReloadScript : StateMachineBehaviour
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().isReloading = false;
+        animator.GetComponent<GunController>().bulletsInClip = animator.GetComponent<GunController>().maxClipSize;
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

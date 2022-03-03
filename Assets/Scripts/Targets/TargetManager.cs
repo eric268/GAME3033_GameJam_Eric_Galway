@@ -5,6 +5,7 @@ using UnityEngine;
 public class TargetManager : MonoBehaviour
 {
     public TargetAttributes[] targets;
+    public int totalTargetsHit;
     public int currentActiveTarget;
     float timeToNextActiveTarget = 3.0f;
     float timeUntilDeactivateTarget = 2.5f;
@@ -32,5 +33,13 @@ public class TargetManager : MonoBehaviour
     void DeactivateTarget()
     {
         targets[currentActiveTarget].SetIsActive(false);
+    }
+
+    public void TargetHit()
+    {
+        totalTargetsHit++;
+        DeactivateTarget();
+        CancelInvoke("DeactivateTarget");
+        print(totalTargetsHit);
     }
 }
