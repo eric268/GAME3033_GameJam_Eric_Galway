@@ -7,8 +7,9 @@ public class TargetManager : MonoBehaviour
     public TargetAttributes[] targets;
     public int totalTargetsHit;
     public int currentActiveTarget;
-    float timeToNextActiveTarget = 3.0f;
-    float timeUntilDeactivateTarget = 2.5f;
+    float timeToNextActiveTarget = 2.5f;
+    float timeUntilDeactivateTarget = 2.25f;
+    float headShotMultiplier = 1.5f;
     public float targetHitMoveAmount;
     public GameUIManager gameUIManager;
     // Start is called before the first frame update
@@ -31,25 +32,34 @@ public class TargetManager : MonoBehaviour
         targets[currentActiveTarget].SetIsActive(false);
     }
 
-    public void TargetHit()
+    public void TargetHit(bool headShot)
     {
         totalTargetsHit++;
         DeactivateTarget();
         CancelInvoke("DeactivateTarget");
         UpdateTargetTime();
         SoundEffectManager.PlaySound("Hit");
-        gameUIManager.TargeHit(targetHitMoveAmount);
+
+        if (headShot)
+        {
+            gameUIManager.TargeHit(targetHitMoveAmount * headShotMultiplier);
+        }
+        else
+        {
+            gameUIManager.TargeHit(targetHitMoveAmount);
+        }
+
     }
     
     void UpdateTargetTime()
     {
         if (totalTargetsHit % 5 == 0)
         {
-            if (timeUntilDeactivateTarget > 0.5f)
+            if (timeUntilDeactivateTarget > 0.2f)
             {
                 gameUIManager.TargeHit(targetHitMoveAmount);
                 gameUIManager.boarderMovementSpeed += 0.05f;
-                targetHitMoveAmount += 10.0f;
+                targetHitMoveAmount += 5.0f;
                 CancelInvoke("ActivateTarget");
                 timeToNextActiveTarget -= 0.1f;
                 timeUntilDeactivateTarget -= 0.1f;

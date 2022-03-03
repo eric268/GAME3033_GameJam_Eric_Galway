@@ -3,13 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameUIManager : MonoBehaviour
 {
     public PlayerController playerController;
+
+    public GameObject restartButton;
+    public GameObject mainMenuButton;
+    public GameObject quitButton;
     public TextMeshProUGUI countdownText;
     public TextMeshProUGUI timerText;
     public TextMeshProUGUI bulletsText;
+    public TextMeshProUGUI gameOverText;
     public RawImage leftBoarderImage;
     public RawImage rightBoarderImage;
     public static bool gameActive;
@@ -39,6 +46,7 @@ public class GameUIManager : MonoBehaviour
 
     void StartGame()
     {
+        Time.timeScale = 1.0f;
         StartCoroutine(ShowCountdown());
     }
 
@@ -47,7 +55,7 @@ public class GameUIManager : MonoBehaviour
         for (int i = 3; i > 0; i--)
         {
             countdownText.text = i.ToString();
-            yield return new WaitForSecondsRealtime(1);
+            yield return new WaitForSeconds(1);
         }
         countdownText.text = "";
         gameActive = true;
@@ -62,6 +70,7 @@ public class GameUIManager : MonoBehaviour
             rightBoarderImage.rectTransform.anchoredPosition = rightStartingPosition;
             gameActive = false;
             Time.timeScale = 0.0f;
+            GameOver();
         }
 
         leftBoarderImage.rectTransform.anchoredPosition = new Vector2(leftBoarderImage.rectTransform.anchoredPosition.x - boarderMovementSpeed, leftBoarderImage.rectTransform.anchoredPosition.y);
@@ -88,8 +97,37 @@ public class GameUIManager : MonoBehaviour
         timerCounter++;
     }
 
-    public void UpdateBulletText(int remainingBullets)
+    void GameOver()
     {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        timerText.text = "";
+        bulletsText.text = "";
+        gameOverText.text = "Game Over!\n Score:" + timerCounter + " seconds!";
+        restartButton.SetActive(true);
+        mainMenuButton.SetActive(true);
+        quitButton.SetActive(true);
+    }
 
+    public void OnRestartButtonPressed()
+    {
+        SceneManager.LoadScene("MainGameScene");
+    }
+
+    public void OnMainMenuButtonPressed()
+    {
+        SceneManager.LoadScene("CreditsScene");
+    }
+    
+    public void OnQuitButtonPressed()
+    {
+        // save any game data here
+#if UNITY_EDITOR
+        // Application.Quit() does not work in the editor so
+        // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+         Application.Quit();
+#endif
     }
 }

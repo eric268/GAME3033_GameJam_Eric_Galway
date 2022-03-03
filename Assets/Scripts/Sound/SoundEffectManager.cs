@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SoundEffectManager : MonoBehaviour
 {
-    public static AudioClip dryShot, hitTarget, fireGun, reloadGun, startReload, activateTarget;
+    public static AudioClip dryShot, hitTarget, fireGun, reloadGun, startReload, activateTarget, headshot;
     static AudioSource audioSource;
     // Start is called before the first frame update
     void Start()
@@ -16,6 +16,7 @@ public class SoundEffectManager : MonoBehaviour
         reloadGun = Resources.Load<AudioClip>("SoundEffects/Reload");
         activateTarget = Resources.Load<AudioClip>("SoundEffects/Activated");
         startReload = Resources.Load<AudioClip>("SoundEffects/StartReload");
+        headshot = Resources.Load<AudioClip>("SoundEffects/Headshot");
     }
 
     public static void PlaySound(string clip)
@@ -39,6 +40,9 @@ public class SoundEffectManager : MonoBehaviour
                 break;
             case "ActivateTarget":
                 audioSource.PlayOneShot(activateTarget, 0.1f);
+                break;
+            case "Headshot":
+                audioSource.PlayOneShot(headshot, 0.5f);
                 break;
         }
     }

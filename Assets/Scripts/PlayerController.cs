@@ -6,13 +6,14 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     PlayerAttributes playerAttributes;
+    public GameObject pauseCanvas;
     public GunController gunController;
     Animator gunAnimator;
     Camera mainCamera;
     public LayerMask targetLayerMask;
     [SerializeField]
     public TargetManager targetManager;
-
+    public static bool gameIsPaused;
     [SerializeField]
     public Vector2 lookInput;
     public float aimSensativity;
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        pauseCanvas.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -46,6 +48,9 @@ public class PlayerController : MonoBehaviour
 
     public void OnFire(InputValue value)
     {
+        if (gameIsPaused)
+            return;
+
         if (!GameUIManager.gameActive || playerAttributes.isFiring || playerAttributes.isReloading) return;
 
         if (gunController.bulletsInClip <= 0)
@@ -66,8 +71,20 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    public void OnPause(InputValue value)
+    {
+        gameIsPaused = true;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        pauseCanvas.SetActive(true);
+        Time.timeScale = 0.0f;
+    }
+
     public void OnReload(InputValue value)
     {
+        if (gameIsPaused)
+            return;
+
         if (!GameUIManager.gameActive || playerAttributes.isFiring || playerAttributes.isReloading) return;
 
         if (gunController.bulletsInClip == gunController.maxClipSize) return;
@@ -77,13 +94,11 @@ public class PlayerController : MonoBehaviour
         gunAnimator.SetTrigger(reloadHashValue);
     }
 
-    public void OnPause(InputValue value)
-    {
-        Time.timeScale = 0.0f;
-    }
-
     void RotatePlayer()
     {
+        if (gameIsPaused)
+            return;
+
         transform.rotation = Quaternion.Euler(0, transform.eulerAngles.y + lookInput.x * aimSensativity, transform.eulerAngles.z + lookInput.y * aimSensativity);
         float angle = transform.eulerAngles.z;
         if (angle > 180 && angle < 300)
@@ -110,7 +125,13 @@ public class PlayerController : MonoBehaviour
 
            if (hit.collider.gameObject.GetComponentInParent<TargetAttributes>().isActive)
            {
-                targetManager.TargetHit();
+                if (hit.collider.CompareTag("Head"))
+                {
+                    targetManager.TargetHit(true);
+                    SoundEffectManager.PlaySound("Headshot");
+                }
+                else 
+                    targetManager.TargetHit(false);
                 return;
            }
         }
