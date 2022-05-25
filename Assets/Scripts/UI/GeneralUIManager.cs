@@ -31,7 +31,7 @@ public class GeneralUIManager : MonoBehaviour
 
     public void OnCreditsButtonPressed()
     {
-        SceneManager.LoadScene("CreditsScene");
+        SceneManager.LoadScene("MainMenuScene");
     }
 
     public void OnRestartButtonPressed()

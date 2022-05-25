@@ -117,7 +117,7 @@ public class GameUIManager : MonoBehaviour
 
     public void OnMainMenuButtonPressed()
     {
-        SceneManager.LoadScene("CreditsScene");
+        SceneManager.LoadScene("MainMenuScene");
     }
     
     public void OnQuitButtonPressed()
